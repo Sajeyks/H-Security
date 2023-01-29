@@ -11,8 +11,8 @@ from .models import Profile, User
 # Forms go here
 
 class RegisterForm(UserCreationForm):
-    username = forms.CharField(max_length=100,required=True,widget=forms.TextInput(attrs={
-                                                                  'placeholder': 'Username',
+    name = forms.CharField(max_length=100,required=True,widget=forms.TextInput(attrs={
+                                                                  'placeholder': 'Name',
                                                                   'class': 'form-control',
                                                                   }))
     
@@ -22,6 +22,16 @@ class RegisterForm(UserCreationForm):
     
     phone_number = PhoneNumberField(required=True, widget=PhoneNumberPrefixWidget(initial='KE', attrs={
                                                                   'placeholder': 'Phone Number',
+                                                                  'class': 'form-control',
+                                                                  }))
+    
+    national_id_no = forms.IntegerField(required=True, widget=forms.NumberInput(attrs={
+                                                                  'placeholder': 'Id/Birth Certificate No',
+                                                                  'class': 'form-control',
+                                                                  }))
+    
+    dob = forms.DateField(required=True, widget=forms.DateInput(attrs={
+                                                                  'type': 'date',
                                                                   'class': 'form-control',
                                                                   }))
     
@@ -41,7 +51,7 @@ class RegisterForm(UserCreationForm):
     
     class Meta:
         model = User
-        fields = ['username', 'email', 'phone_number' ,'password1', 'password2']
+        fields = ['name', 'email', 'phone_number', 'national_id_no', 'dob' , 'password1', 'password2']
         
 
 class LoginForm(AuthenticationForm):
@@ -62,11 +72,11 @@ class LoginForm(AuthenticationForm):
 
     class Meta:
         model = User
-        fields = ['username', 'password', 'remember_me']
+        fields = ['name', 'password', 'remember_me']
         
         
 class UpdateUserForm(forms.ModelForm):
-    username = forms.CharField(max_length=100,
+    name = forms.CharField(max_length=100,
                                required=True,
                                widget=forms.TextInput(attrs={'class': 'form-control'}))
     email = forms.EmailField(required=True,
@@ -77,9 +87,19 @@ class UpdateUserForm(forms.ModelForm):
                                                                   'class': 'form-control',
                                                                   }))
     
+    national_id_no = forms.IntegerField(required=True, widget=forms.NumberInput(attrs={
+                                                                'placeholder': 'Id/Birth Certificate No',
+                                                                'class': 'form-control',
+                                                                }))
+    
+    dob = forms.DateField(required=True, widget=forms.DateInput(attrs={
+                                                                  'type': 'date',
+                                                                  'class': 'form-control',
+                                                                  }))
+    
     class Meta:
         model = User
-        fields = ['username', 'email', 'phone_number']
+        fields = ['name', 'email', 'phone_number', 'national_id_no', 'dob']
         
 class UpdateProfileForm(forms.ModelForm):
     avatar = forms.ImageField(widget=forms.FileInput(attrs={'class': 'form-control-file'}))

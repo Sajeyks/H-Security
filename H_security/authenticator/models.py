@@ -1,30 +1,34 @@
 from django.db import models
 from django.contrib.auth.models import (BaseUserManager, AbstractBaseUser, PermissionsMixin)
 from phonenumber_field.modelfields import PhoneNumberField
-
+from datetime import date
 from PIL import Image
+from django.utils.timezone import now
 
 # Create your models here.
 
 class UserManager(BaseUserManager):
     """ A manager class for the custom user model """
 
-    def create_user(self, username, email, password=None):
-        if username is None:
-            raise TypeError('User must have a username')
+    def create_user(self, name, email, national_id_no, password=None):
+        if name is None:
+            raise TypeError('User must have a name')
         if email is None:
             raise TypeError('User must have an email')
+        
+        if national_id_no is None:
+            raise TypeError('User must have an national_id_no')
 
-        user = self.model(username=username, email=self.normalize_email(email))
+        user = self.model(name=name, email=self.normalize_email(email), national_id_no=national_id_no)
         user.set_password(password)
         user.save()
         return user
 
-    def create_superuser(self, username, email, password=None):
+    def create_superuser(self, name, email,national_id_no, password=None):
         if password is None:
             raise TypeError('Password cannot be null')
 
-        user = self.create_user(username, email, password)
+        user = self.create_user(name, email,national_id_no, password)
         user.is_superuser = True
         user.is_active = True
         user.is_verified = True
@@ -36,9 +40,11 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser, PermissionsMixin):
     """ The custom user model """
 
-    username = models.CharField(max_length=255, unique=True, db_index=True)
+    name = models.CharField(max_length=255)
     email = models.EmailField(max_length=255, unique=True, db_index=True)
     phone_number = PhoneNumberField(blank=False)
+    national_id_no = models.IntegerField(unique=True)
+    dob = models.DateField(default=date.today)
     is_verified = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -46,12 +52,17 @@ class User(AbstractBaseUser, PermissionsMixin):
     updated_at = models.DateTimeField(auto_now_add=True)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
+    REQUIRED_FIELDS = ['name', 'national_id_no']
 
     objects = UserManager()
 
     def __str__(self):
         return self.email
+    
+    def age(self):
+        today = date.today()
+        dob = self.dob
+        return today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
     
     
 class Profile(models.Model):
@@ -61,7 +72,7 @@ class Profile(models.Model):
     bio = models.TextField()
     
     def __str__(self):
-        return self.user.username
+        return self.user
     
     def save(self, *args, **kwargs):
         super().save()
