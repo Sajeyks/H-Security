@@ -6,6 +6,7 @@ from django.db.models import Q
 # Create your views here.
 
 
+
 def healthRecord(request):
     records = HealthRecord.objects.all()
     
@@ -17,11 +18,22 @@ def healthRecord(request):
         records = paginator.page(1)
     except EmptyPage:
         records = paginator.page(paginator.num_pages)
-    
+            
     context = {
         "Records": records,
         }
-    return render(request, "healthrecords.html", context)
+    return render(request, "p_records/healthrecords.html", context)
+
+
+def recordDetails(request, pk):
+    recorddetails = HealthRecord.objects.get(pk=pk)
+    
+    context = {
+        "Recorddetails": recorddetails,
+        }
+    
+    return render(request, "p_records/record-details.html", context)
+
 
 def hospitaVisit(request):
     visits = HospitalVisit.objects.all()
@@ -49,4 +61,4 @@ def hospitaVisitDetails(request, pk):
         "Visitdetails": visitdetails,
         }
     
-    return render(request, "hospital_visit_details.html", context)
+    return render(request, "p_records/hospital-visit-details.html", context)
