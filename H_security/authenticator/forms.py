@@ -1,12 +1,9 @@
 from django import forms
-# from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from phonenumber_field.formfields import PhoneNumberField
 from django.utils.translation import gettext as _
 from phonenumber_field.widgets import PhoneNumberPrefixWidget
 from .models import Profile, User
-
-# User = get_user_model()
 
 # Forms go here
 
