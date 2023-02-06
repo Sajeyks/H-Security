@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %} Login Page {% endblock title%}
+{% block content %}
+    
+<div class="container">
+
+    <div class="jumbotron p-2" style="margin-top: 1rem;">
+        <p class="lead">
+
+            <div class="mb-3 row">
+                <label for="staticEmail" class="col-sm-2 col-form-label">Name:</label>
+                <div class="col-sm-10">
+                  <input type="text" readonly class="form-control-plaintext" value="{{ Recorddetails.owner.name }}">
+                </div>
+            </div>
+
+            <div class="mb-3 row">
+                <label for="staticEmail" class="col-sm-2 col-form-label">Email:</label>
+                <div class="col-sm-10">
+                  <input type="text" readonly class="form-control-plaintext" id="staticEmail" value="{{ Recorddetails.owner }}">
+                </div>
+            </div>
+
+            <div class="mb-3 row">
+                <label for="staticEmail" class="col-sm-2 col-form-label">Phone:</label>
+                <div class="col-sm-10">
+                  <input type="text" readonly class="form-control-plaintext" value="{{ Recorddetails.owner.phone_number }}">
+                </div>
+            </div>
+
+
+            <div class="badge bg-info text-wrap">
+                Pre-excisting conditions
+              </div>
+
+            <ol class="list-group list-group-numbered">
+                {% for p in Recorddetails.pre_existing_conditions.all %}
+
+                <li class="list-group-item" style="background-color: lavender;">{{ p }}</li>
+                
+                {% endfor %}
+            </ol>
+
+        </p>
+        <hr class="my-4">
+        <p class="lead">
+            <a class="btn btn-primary btn-md" href="{% url 'users-profile' %}" role="button">Edit</a>
+        </p>
+    </div>
+
+        
+        <table class="table table-striped-columns">
+            <thead>
+            <tr class="text-primary">
+                <th scope="col">#</th>
+                <th scope="col">Hospital Visits</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for v in Recorddetails.hospital_visits.all %}
+            <tr>
+                <td >{{ forloop.counter }}</td>
+                <td >
+                    <a href="{% url 'visit-details' Recorddetails.pk %}" class="text-info">{{ v }}</a>
+                </td>
+            </tr>
+        </tbody>
+            {% endfor %}
+        </table>
+
+    
+    
+</div>
+
+{% endblock content %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %} Login Page {% endblock title%}
+{% block content %}
+    
+
+<form class="d-flex p-3">
+    <input class="form-control me-2" type="search" placeholder="Search patient records using email or id" aria-label="Search">
+    <button class="btn btn-outline-success" type="submit">Search</button>
+</form>
+
+    <table class="table table-striped-columns">
+        <thead>
+          <tr class="text-primary">
+            <th scope="col">#</th>
+            <th scope="col">Patient Records</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in Records %}
+          <tr>
+            <td >{{ forloop.counter }}</td>
+            <td >
+                <a href="{% url 'records-details' r.pk %}" class="text-info">{{ r.owner }}</a>
+            </td>
+          </tr>
+      </tbody>
+          {% endfor %}
+      </table>
+    
+{% endblock content %}
