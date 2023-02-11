@@ -8,7 +8,6 @@ User = get_user_model()
 
 class LabTest(models.Model):
     test = models.CharField(max_length=100)
-    finding = models.TextField(max_length=1000)
     
     def __str__(self):
         return self.test
@@ -24,8 +23,6 @@ class Diagnosis(models.Model):
         
     
 class Prescription(models.Model):
-    prescription_type = models.CharField(choices=PRESCRIPTION_TYPE, max_length=100)
-    medicine_type = models.CharField(choices=MEDICINE_TYPE, max_length=100)
     medicine_name = models.CharField(max_length=100)
     
     def __str__(self):
@@ -62,17 +59,10 @@ class HospitalVisit(models.Model):
             for x in self.edited_by:
                 hospitals.append(x)
         return set(hospitals)
-        
-    
-class PreexistingCondition(models.Model):
-    condition = models.CharField(max_length=200)
-    
-    def __str__(self):
-        return self.condition
     
 class HealthRecord(models.Model):
     owner = models.ForeignKey(User, on_delete= models.CASCADE)
-    pre_existing_conditions = models.ManyToManyField(PreexistingCondition, related_name="h_pre_conditions")
+    pre_existing_conditions = models.TextField(max_length=200, blank=True)
     hospital_visits = models.ManyToManyField(HospitalVisit, related_name="h_hospital_visits")
     
     def __str__(self):
