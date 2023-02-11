@@ -34,18 +34,51 @@
               </div>
 
             <ol class="list-group list-group-numbered">
-                {% for p in Recorddetails.pre_existing_conditions.all %}
-
-                <li class="list-group-item" style="background-color: lavender;">{{ p }}</li>
-                
-                {% endfor %}
+                <li class="list-group-item" style="background-color: lavender;">
+                  {{ Recorddetails.pre_existing_conditions }}
+                </li>
             </ol>
 
         </p>
         <hr class="my-4">
+
         <p class="lead">
-            <a class="btn btn-primary btn-md" href="{% url 'users-profile' %}" role="button">Edit</a>
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                Edit
+            </button>
         </p>
+  
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h6 class="modal-title" id="exampleModalLabel">Edit Pre-existing conditions</h6>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  
+                  <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-group">
+                      <label for="recipient-name" class="col-form-label"></label>
+                      <textarea class="form-control" id="exampleFormControlTextarea1" name="pre_existing_conditions">{{ Recorddetails.pre_existing_conditions }}
+                      </textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm btn-submit">Submit</button>
+                  </form>
+
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
     </div>
 
         
@@ -73,3 +106,12 @@
 </div>
 
 {% endblock content %}
+
+<script>
+
+$('#myModal').on('shown.bs.modal', function () {
+  $('#myInput').trigger('focus')
+})
+
+
+</script>
