@@ -1,6 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
+from django.contrib import messages
+from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .models import LabTest, Diagnosis, Prescription, Bill, HospitalVisit, PreexistingCondition, HealthRecord
+from .models import LabTest, Diagnosis, Prescription, Bill, HospitalVisit, HealthRecord
+from .forms import UpdatePreconditionsForm
 from django.db.models import Q
 
 # Create your views here.
@@ -26,7 +31,21 @@ def healthRecord(request):
 
 
 def recordDetails(request, pk):
+    
     recorddetails = HealthRecord.objects.get(pk=pk)
+    
+    
+    if request.method == 'POST':
+        preconditions_form = UpdatePreconditionsForm(request.POST, instance=recorddetails)
+        
+        if preconditions_form.is_valid():
+            preconditions_form.save()
+            messages.success(request, 'Pre-conditions updated successfully!')
+            return redirect(request.path_info)
+        else:
+            print(preconditions_form.errors)
+    else:
+        preconditions_form = UpdatePreconditionsForm(instance=recorddetails)
     
     context = {
         "Recorddetails": recorddetails,
@@ -56,9 +75,12 @@ def hospitaVisit(request):
 
 def hospitaVisitDetails(request, pk):
     visitdetails = HospitalVisit.objects.get(pk=pk)
+    health_record = HealthRecord.objects.get(hospital_visits=visitdetails)
+    owner = health_record.owner
     
     context = {
         "Visitdetails": visitdetails,
+        "Owner": owner,
         }
     
     return render(request, "p_records/hospital-visit-details.html", context)
