@@ -10,7 +10,7 @@
           <div class="mb-3 row">
             <label for="staticEmail" class="col-sm-2 col-form-label">Patient:</label>
             <div class="col-sm-10">
-              <input type="text" readonly class="form-control-plaintext" value="{{ Visitdetails.h_hospital_visits }}">
+              <input type="text" readonly class="form-control-plaintext" value="{{ Owner }}">
             </div>
           </div>
 
@@ -55,31 +55,32 @@
                   </thead>
                   <tbody>
                     <tr>
+
+                      <td>
                       {% for vd in Visitdetails.tests.all %}
-                      {% if not forloop.last %}, {% endif %}
-                      <td>
-                        {{ vd }}
-                        {% if not forloop.first %}{% if forloop.last %} and {% else %}, {% endif %}{% endif %}
-                      </td>
-                      {% endfor %}
-
-
-                      {% for vd in Visitdetails.diagnosis.all %}
-                      {% if not forloop.last %}, {% endif %}
-                      <td>
-                        {{ vd }}
-                        {% if not forloop.first %}{% if forloop.last %} and {% else %}, {% endif %}{% endif %}
-                      </td>
-                      {% endfor %}
-
-
-                      {% for vd in Visitdetails.prescriptions.all %}
                       
-                      <td>
-                        {{ vd }} 
-                        {% if not forloop.first %}{% if forloop.last %} and {% else %}, {% endif %}{% endif %}
-                      </td>
+                        {{ vd }} {% if not forloop.last %},{% endif %}
+
                       {% endfor %}
+                    </td>
+
+
+                    <td>
+                      {% for vd in Visitdetails.diagnosis.all %}
+
+                        {{ vd }} {% if not forloop.last %},{% endif %}
+
+                      {% endfor %}
+                    </td>
+
+
+                    <td>
+                      {% for vd in Visitdetails.prescriptions.all %}
+
+                        {{ vd }} {% if not forloop.last %},{% endif %}
+
+                      {% endfor %}
+                    </td>
                       
                     </tr>
                   </tbody>
