@@ -1,8 +1,9 @@
 {% extends "base.html" %}
+{% load crispy_forms_tags %}
 {% block title %} Login Page {% endblock title%}
 {% block content %}
     
-<div class="container">
+<div class=" ">
 
     <div class="jumbotron p-2" style="margin-top: 1rem;">
         <p class="lead">
@@ -57,30 +58,17 @@
                     <tr>
 
                       <td>
-                      {% for vd in Visitdetails.tests.all %}
-                      
-                        {{ vd }} {% if not forloop.last %},{% endif %}
-
-                      {% endfor %}
+                        {{ Visitdetails.tests }}
                     </td>
 
 
                     <td>
-                      {% for vd in Visitdetails.diagnosis.all %}
+                      {{ Visitdetails.diagnosis }}
+                  </td>
 
-                        {{ vd }} {% if not forloop.last %},{% endif %}
-
-                      {% endfor %}
-                    </td>
-
-
-                    <td>
-                      {% for vd in Visitdetails.prescriptions.all %}
-
-                        {{ vd }} {% if not forloop.last %},{% endif %}
-
-                      {% endfor %}
-                    </td>
+                  <td>
+                    {{ Visitdetails.prescriptions }}
+                </td>
                       
                     </tr>
                   </tbody>
@@ -94,65 +82,7 @@
 
               <div class="table-responsive mw-50">
                 <table class="table align-middle table-bordered table-sm">
-                  <thead>
-                    <tr class="text-primary">
-                        <th scope="col">Item</th>
-                        <th scope="col">Amount</th>
-                    </tr>
-                  </thead>
                   <tbody>
-                    <tr>
-                      <td >
-                        Consultation
-                      </td>
-                      <td >
-                        {{ Visitdetails.bill.consultation }}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td >
-                        Lab tests
-                      </td>
-                      <td >
-                        {{ Visitdetails.bill.lab_tests }}
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td >
-                        Medical imaging
-                      </td>
-                      <td >
-                        {{ Visitdetails.bill.medical_imaging }}
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td >
-                        Medicine
-                      </td>
-                      <td >
-                        {{ Visitdetails.bill.medicine }}
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td >
-                        Treatment
-                      </td>
-                      <td >
-                        {{ Visitdetails.bill.treatment }}
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td >
-                        Surgery
-                      </td>
-                      <td >
-                        {{ Visitdetails.bill.surgery }}
-                      </td>
-                    </tr>
 
                     <tr>
                       <td >
@@ -168,7 +98,7 @@
                         Billed to
                       </td>
                       <td >
-                        {{ Visitdetails.bill.billed_to }}
+                        {{ Visitdetails.billed_to }}
                       </td>
                     </tr>
 
@@ -177,7 +107,7 @@
                         Paid
                       </td>
                       <td >
-                        {% if Visitdetails.bill.paid is True %}
+                        {% if Visitdetails.paid is True %}
                           Yes
                         {% else %}
                           No
@@ -194,8 +124,39 @@
         </p>
         <hr class="my-4">
         <p class="lead">
-            <a class="btn btn-primary btn-md" href="{% url 'users-profile' %}" role="button">Edit</a>
+            <!-- Button trigger modal -->
+            <button type="button" class="btn-sm btn-primary" data-toggle="modal" data-target="#exampleModal">
+              Edit
+          </button>
         </p>
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h6 class="modal-title" id="exampleModalLabel">Edit a hospital visit</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+
+                <form method="POST" novalidate>
+                  {% csrf_token %}
+                  {{ form|crispy }}
+                  <button type="submit" class="btn btn-success">Submit</button>
+                </form>
+
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
     </div>
 
 
