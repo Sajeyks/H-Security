@@ -4,13 +4,11 @@ from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .models import LabTest, Diagnosis, Prescription, Bill, HospitalVisit, HealthRecord
-from .forms import UpdatePreconditionsForm
+from .models import HospitalVisit, HealthRecord
+from .forms import UpdatePreconditionsForm, HospitalVisitForm
 from django.db.models import Q
 
 # Create your views here.
-
-
 
 def healthRecord(request):
     records = HealthRecord.objects.all()
@@ -78,9 +76,22 @@ def hospitaVisitDetails(request, pk):
     health_record = HealthRecord.objects.get(hospital_visits=visitdetails)
     owner = health_record.owner
     
+    if request.method == 'POST':
+        visit_form = HospitalVisitForm(request.POST, instance=visitdetails)
+        
+        if visit_form.is_valid():
+            visit_form.save()
+            messages.success(request, 'Hospital visit updated successfully!')
+            return redirect(request.path_info)
+        else:
+            print(visit_form.errors)
+    else:
+        visit_form = HospitalVisitForm(instance=visitdetails)
+    
     context = {
         "Visitdetails": visitdetails,
         "Owner": owner,
+        "form": visit_form,
         }
     
-    return render(request, "p_records/hospital-visit-details.html", context)
+    return render(request, "p_records/hospital-visit-details.html", context)    
