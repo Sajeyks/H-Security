@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.contrib import messages
@@ -49,6 +50,49 @@ def recordDetails(request, pk):
 
     return render(request, "p_records/record-details.html", context)
 
+def searchRecords(request):
+    query = request.GET.get('search')
+    if query:
+        records = HealthRecord.objects.filter(
+        Q(owner__national_id_no__icontains=query ) | 
+        Q(owner__name__icontains=query) |
+        Q(owner__email__icontains=query)
+        )
+        print(query)
+        page = request.GET.get('page', 1)
+        paginator = Paginator(records, 15)
+        try:
+            records = paginator.page(page)
+        except PageNotAnInteger:
+            records = paginator.page(1)
+        except EmptyPage:
+            records = paginator.page(paginator.num_pages)
+
+
+        context = {
+            'Records': records,
+            'query': query
+        }
+        return render(request, "p_records/record-search.html", context)
+    
+		
+    else:
+        records = HealthRecord.objects.all()
+
+        page = request.GET.get('page', 1)
+        paginator = Paginator(records, 15)
+        try:
+            records = paginator.page(page)
+        except PageNotAnInteger:
+            records = paginator.page(1)
+        except EmptyPage:
+            records = paginator.page(paginator.num_pages)
+            
+        context = {
+            'Records': records,
+        }
+
+        return render(request, "p_records/healthrecords.html", context)
 
 def addHospitalVisit(request, pk):
     recorddetails = HealthRecord.objects.get(pk=pk)
