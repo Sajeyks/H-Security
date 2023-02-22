@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block title %} Login Page {% endblock title%}
+{% block content %}
+    
+<div class="container">
+
+    <form method="POST" action="{% url 'visit_submit' Recorddetails.pk %}">
+        {% csrf_token %}
+        {{ visit_form|crispy }}
+        <button type="submit" class="btn btn-success">Submit</button>
+      </form>
+
+    
+</div>
+
+{% endblock content %}
