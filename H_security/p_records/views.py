@@ -1,8 +1,5 @@
-from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
 from django.contrib import messages
-from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import HospitalVisit, HealthRecord
@@ -11,6 +8,7 @@ from django.db.models import Q
 
 # Create your views here.
 
+@login_required
 def healthRecord(request):
     records = HealthRecord.objects.all()
     
@@ -28,7 +26,7 @@ def healthRecord(request):
         }
     return render(request, "p_records/healthrecords.html", context)
 
-
+@login_required
 def recordDetails(request, pk):
     recorddetails = HealthRecord.objects.get(pk=pk)
 
@@ -50,6 +48,7 @@ def recordDetails(request, pk):
 
     return render(request, "p_records/record-details.html", context)
 
+@login_required
 def searchRecords(request):
     query = request.GET.get('search')
     if query:
@@ -94,6 +93,7 @@ def searchRecords(request):
 
         return render(request, "p_records/healthrecords.html", context)
 
+@login_required
 def addHospitalVisit(request, pk):
     recorddetails = HealthRecord.objects.get(pk=pk)
     editor = request.user
@@ -122,6 +122,7 @@ def addHospitalVisit(request, pk):
     return render(request, "p_records/add-hospital-visit.html", context)
 
 
+@login_required
 def hospitaVisit(request):
     visits = HospitalVisit.objects.all()
     
@@ -141,6 +142,7 @@ def hospitaVisit(request):
     return render(request, "hospital_visits.html", context)
 
 
+@login_required
 def hospitaVisitDetails(request, pk):
     visitdetails = HospitalVisit.objects.get(pk=pk)
     health_record = HealthRecord.objects.get(hospital_visits=visitdetails)
@@ -166,6 +168,7 @@ def hospitaVisitDetails(request, pk):
     
     return render(request, "p_records/hospital-visit-details.html", context)
 
+@login_required
 def deleteHospitalVisit(request, pk):
     visit = HospitalVisit.objects.get(pk=pk)
     healthRecord = HealthRecord.objects.get(hospital_visits=visit)
