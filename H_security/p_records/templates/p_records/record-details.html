@@ -91,7 +91,7 @@
             <tr>
                 <td >{{ forloop.counter }}</td>
                 <td >
-                    <a href="{% url 'visit-details' Recorddetails.pk %}" class="text-info">{{ v }}</a>
+                    <a href="{% url 'visit-details' v.pk %}" class="text-info">{{ v }}</a>
                 </td>
             </tr>
         </tbody>
