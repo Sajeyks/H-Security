@@ -29,27 +29,53 @@ def healthRecord(request):
 
 
 def recordDetails(request, pk):
-    
     recorddetails = HealthRecord.objects.get(pk=pk)
-    
-    
+
+    preconditions_form = UpdatePreconditionsForm(instance=recorddetails)
+
     if request.method == 'POST':
         preconditions_form = UpdatePreconditionsForm(request.POST, instance=recorddetails)
-        
+
         if preconditions_form.is_valid():
             preconditions_form.save()
             messages.success(request, 'Pre-conditions updated successfully!')
-            return redirect(request.path_info)
         else:
             print(preconditions_form.errors)
-    else:
-        preconditions_form = UpdatePreconditionsForm(instance=recorddetails)
-    
+
     context = {
         "Recorddetails": recorddetails,
-        }
-    
+        "preconditions_form": preconditions_form,
+    }
+
     return render(request, "p_records/record-details.html", context)
+
+
+def addHospitalVisit(request, pk):
+    recorddetails = HealthRecord.objects.get(pk=pk)
+    editor = request.user
+
+    if request.method == 'POST':
+        visit_form = HospitalVisitForm(request.POST)
+
+        if visit_form.is_valid():
+            new_instance = visit_form.save(commit=False)
+            new_instance.save()
+            new_instance.edited_by.add(editor)
+            new_instance.save()
+            recorddetails.hospital_visits.add(new_instance)
+            messages.success(request, 'Hospital visit added successfully!')
+            return redirect('records-details', pk=pk)
+        else:
+            print(visit_form.errors)
+    else:
+        visit_form = HospitalVisitForm()
+
+    context = {
+        "Recorddetails": recorddetails,
+        "visit_form": visit_form,
+    }
+
+    return render(request, "p_records/add-hospital-visit.html", context)
 
 
 def hospitaVisit(request):
