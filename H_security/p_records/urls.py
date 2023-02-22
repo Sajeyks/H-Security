@@ -1,6 +1,6 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
-from .views import healthRecord, recordDetails, hospitaVisit, hospitaVisitDetails, addHospitalVisit, deleteHospitalVisit
+from .views import healthRecord, recordDetails, hospitaVisit, hospitaVisitDetails, addHospitalVisit, deleteHospitalVisit, searchRecords
 # from .forms import LoginForm
 
 urlpatterns = [
@@ -9,5 +9,6 @@ urlpatterns = [
     path('visit-details/<int:pk>',  hospitaVisitDetails, name='visit-details'),
     path('<int:pk>/add-visit/', addHospitalVisit, name='visit_submit'),
     path('<int:pk>/delete-visit/', deleteHospitalVisit, name='visit_delete'),
+    path('search-results/',  searchRecords, name='search-records'),
     
 ]
