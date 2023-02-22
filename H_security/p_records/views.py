@@ -14,7 +14,7 @@ def healthRecord(request):
     records = HealthRecord.objects.all()
     
     page = request.GET.get('page', 1)
-    paginator = Paginator(records, 10)
+    paginator = Paginator(records, 50)
     try:
         records = paginator.page(page)
     except PageNotAnInteger:
@@ -120,4 +120,13 @@ def hospitaVisitDetails(request, pk):
         "form": visit_form,
         }
     
-    return render(request, "p_records/hospital-visit-details.html", context)    
+    return render(request, "p_records/hospital-visit-details.html", context)
+
+def deleteHospitalVisit(request, pk):
+    visit = HospitalVisit.objects.get(pk=pk)
+    healthRecord = HealthRecord.objects.get(hospital_visits=visit)
+    return_id = healthRecord.pk
+    visit.delete()
+    messages.success(request, 'Hospital visit deleted successfully!')
+    return redirect('records-details', pk=return_id)
+    
