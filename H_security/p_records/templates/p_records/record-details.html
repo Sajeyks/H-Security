@@ -1,8 +1,9 @@
 {% extends "base.html" %}
+{% load crispy_forms_tags %}
 {% block title %} Login Page {% endblock title%}
 {% block content %}
     
-<div class="container">
+<div class=" ">
 
     <div class="jumbotron p-2" style="margin-top: 1rem;">
         <p class="lead">
@@ -44,13 +45,13 @@
 
         <p class="lead">
             <!-- Button trigger modal -->
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-                Edit
+            <button type="button" class="btn-sm btn-primary" data-toggle="modal" data-target="#pre-conditions-modal">
+                Edit Pre-conditions
             </button>
         </p>
   
-        <!-- Modal -->
-        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <!-- Pre-conditions Modal -->
+        <div class="modal fade" id="pre-conditions-modal" tabindex="-1" aria-labelledby="pre-conditions-modal" aria-hidden="true">
             <div class="modal-dialog">
               <div class="modal-content">
                 <div class="modal-header">
@@ -61,14 +62,10 @@
                 </div>
                 <div class="modal-body">
                   
-                  <form method="post" enctype="multipart/form-data">
+                  <form method="post" >
                     {% csrf_token %}
-                    <div class="form-group">
-                      <label for="recipient-name" class="col-form-label"></label>
-                      <textarea class="form-control" id="exampleFormControlTextarea1" name="pre_existing_conditions">{{ Recorddetails.pre_existing_conditions }}
-                      </textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-sm btn-submit">Submit</button>
+                    {{ preconditions_form|crispy }}
+                    <button type="submit" class="btn btn-success">Submit</button>
                   </form>
 
                 </div>
@@ -101,8 +98,8 @@
             {% endfor %}
         </table>
 
-    
-    
+        <a href="{% url 'visit_submit' Recorddetails.pk %}" class="btn-sm btn-primary" role="button" aria-pressed="true">Add Hospital Visit</a>
+
 </div>
 
 {% endblock content %}
