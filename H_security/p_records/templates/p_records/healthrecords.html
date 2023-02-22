@@ -3,16 +3,20 @@
 {% block content %}
     
 
-<form class="d-flex p-3">
-    <input class="form-control me-2" type="search" placeholder="Search patient records using email or id" aria-label="Search">
+<form action= "{% url 'search-records' %}" class="d-flex p-3" method="GET" role="search">
+  {% csrf_token %}
+    <input class="form-control me-2" type="search" name="search" placeholder="Search patient records using email or id" aria-label="Search">
     <button class="btn btn-outline-success" type="submit">Search</button>
 </form>
+
+
 
     <table class="table table-striped-columns">
         <thead>
           <tr class="text-primary">
             <th scope="col">#</th>
-            <th scope="col">Patient Records</th>
+            <th scope="col">By email</th>
+            <th scope="col">By names</th>
           </tr>
         </thead>
         <tbody>
@@ -22,6 +26,11 @@
             <td >
                 <a href="{% url 'records-details' r.pk %}" class="text-info">{{ r.owner }}</a>
             </td>
+
+            <td >
+              <a href="{% url 'records-details' r.pk %}" class="text-info">{{ r.owner.name }}</a>
+          </td>
+
           </tr>
       </tbody>
           {% endfor %}
