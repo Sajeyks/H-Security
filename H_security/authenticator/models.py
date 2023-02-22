@@ -3,9 +3,12 @@ from django.contrib.auth.models import (BaseUserManager, AbstractBaseUser, Permi
 from phonenumber_field.modelfields import PhoneNumberField
 from datetime import date
 from PIL import Image
-from django.utils.timezone import now
-
+from django.core.exceptions import ValidationError
 # Create your models here.
+
+def validate_digits(value):
+    if value and len(str(value)) < 8:
+        raise ValidationError('ID number must have more than 8 digits.')
 
 class UserManager(BaseUserManager):
     """ A manager class for the custom user model """
@@ -43,7 +46,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=255)
     email = models.EmailField(max_length=255, unique=True, db_index=True)
     phone_number = PhoneNumberField(blank=False)
-    national_id_no = models.IntegerField(unique=True)
+    national_id_no = models.PositiveIntegerField(unique=True, validators=[validate_digits])
     dob = models.DateField(default=date.today)
     is_verified = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
