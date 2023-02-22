@@ -10,7 +10,7 @@ class HospitalVisit(models.Model):
     tests = models.TextField(max_length=200, blank=True)
     diagnosis = models.TextField(max_length=200, blank=True)
     prescriptions = models.TextField(max_length=200, blank=True)
-    edited_by = models.ManyToManyField(User, related_name="h_edited_by")
+    edited_by = models.ManyToManyField(User, related_name="h_edited_by", blank=True)
     date_recorded = models.DateField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
     bill = MoneyField(max_digits=14, decimal_places=2, default_currency='KES', default=('0.0'))
