@@ -123,12 +123,7 @@
 
         </p>
         <hr class="my-4">
-        <p class="lead">
-            <!-- Button trigger modal -->
-            <button type="button" class="btn-sm btn-primary" data-toggle="modal" data-target="#exampleModal">
-              Edit
-          </button>
-        </p>
+        
 
         <!-- Modal -->
         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -156,8 +151,29 @@
           </div>
         </div>
 
+        <div class="badge bg-info text-wrap">
+          Edited by:
+        </div>
+
+      <ol class="list-group list-group-numbered">
+          <li class="list-group-item" style="background-color: lavender;">
+            {{ Visitdetails.edited_by.all |join:', ' }}
+          </li>
+      </ol>
+
 
     </div>
+
+    <p class="lead">
+      <!-- Button trigger modal -->
+      <button type="button" class="btn-sm btn-primary" data-toggle="modal" data-target="#exampleModal">
+        Edit
+    </button>
+
+  <a href="{% url 'visit_delete' Visitdetails.pk %}" 
+  class="btn-sm btn-danger float-right" role="button" aria-pressed="true">Delete this visit</a>
+
+  </p>
 
 
     
