@@ -8,6 +8,7 @@
                     <div class="card shadow-lg border-0 rounded-lg mt-0 mb-3">
                         <div class="card-header justify-content-center">
                           <h3 class="font-weight-light my-1 text-center">Sign In</h3>
+                          <h6 class="font-weight-light my-1 text-center">Activate email before loging in</h6>
                         </div>
                         {% if form.errors %}
                             <div class="alert alert-danger alert-dismissible" role="alert">
@@ -62,7 +63,8 @@
                         <div class="card-footer text-center">
                             <div class="small">
                                 <a href="{% url 'register' %}">Don't have an account yet? Go to signup</a><br>
-                                <a href="{% url 'password_reset' %}"><i>Forgot Password?</i></a>
+                                <a href="{% url 'password_reset' %}"><i>Forgot Password?</i></a><br>
+                                <a href="{% url 'resend-activation-email' %}"><i>Resend email verification email?</i></a>
                             </div>
                         </div>
                     </div>
