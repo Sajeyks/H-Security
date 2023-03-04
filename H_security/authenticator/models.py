@@ -49,7 +49,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     national_id_no = models.PositiveIntegerField(unique=True, validators=[validate_digits])
     dob = models.DateField(default=date.today)
     is_verified = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)
@@ -75,7 +75,7 @@ class Profile(models.Model):
     bio = models.TextField()
     
     def __str__(self):
-        return self.user
+        return self.user.email
     
     def save(self, *args, **kwargs):
         super().save()
