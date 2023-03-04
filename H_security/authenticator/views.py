@@ -2,11 +2,17 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.views import LoginView, PasswordResetView, PasswordChangeView
 from django.views import View
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.decorators import login_required
-from .forms import RegisterForm, LoginForm, UpdateProfileForm, UpdateUserForm
+from django.contrib.sites.shortcuts import get_current_site
+from .forms import RegisterForm, LoginForm, UpdateProfileForm, UpdateUserForm, ResendActivationEmailForm
+from django.contrib.auth import get_user_model
+from H_security.utils import Mail
+from django.http import HttpResponse
 # Create your views here.
+
+User = get_user_model()
 
 def home(request):
     return render(request, 'authenticator/homepage.html')
@@ -28,7 +34,7 @@ class RegisterView(View):
     def get(self, request, *args, **kwargs):
         form = self.form_class(initial=self.initial)
         return render(request, self.template_name, {'form': form})
-    
+        
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         
@@ -36,10 +42,21 @@ class RegisterView(View):
             form.save()
             
             name = form.cleaned_data.get('name')
-            messages.success(request, f'Account created for {name}')
+            messages.success(request, f'Account created for {name}, check in your email for an account activation link')
             
-            return redirect(to="/")
+            user_email = form.cleaned_data.get('email')
+            user = User.objects.get(email=user_email)
+
+            current_site = get_current_site(request).domain
+            relativeLink = reverse('verify-email')
+
+            absurl = 'http://' + current_site + relativeLink + "?token=" + str(user.id)
+            email_body = "Hi " + user.name + '! \nUse the link below to verify your email \n\n' + absurl
+            data = {'email_body': email_body,'to_email': user.email,
+                'email_subject':'Verify your email'}
+            Mail.send_email(data)
         
+            return redirect(to="/")
         return render(request, self.template_name, {'form': form})
     
     
@@ -95,3 +112,54 @@ class ChangePasswordView(SuccessMessageMixin, PasswordChangeView):
     template_name = 'authenticator/change_password.html'
     success_message = 'Successfully Changed Your Password'
     success_url = reverse_lazy('homepage')
+    
+    
+def verifyEmailView(request):
+    token = request.GET.get('token')
+    try:
+        user = User.objects.get(id=token)
+        if not user.is_verified:
+            user.is_verified = True
+            user.is_active = True
+            user.save()
+        return HttpResponse({'Succesfully verified and account activated'})
+
+    except Exception as E:
+        return HttpResponse(E)
+    
+    
+def resendVerificationEmail(request):
+    if request.method == 'POST':
+        re_form = ResendActivationEmailForm(request.POST)
+        
+        if re_form.is_valid():
+            user_email = re_form.cleaned_data.get('email')
+            try:
+                if  User.objects.filter(email=user_email).exists:
+                    user = User.objects.get(email__exact=user_email)
+                    current_site = get_current_site(request).domain
+                    relativeLink = reverse('verify-email')
+
+                    absurl = 'http://' + current_site + relativeLink + "?token=" + str(user.id)
+                    email_body = "Hi " + user.name+ '! \nUse the link below to verify your email \n\n' + absurl
+                    data = {'email_body': email_body,'to_email': user.email,
+                        'email_subject':'Verify your email'}
+                    Mail.send_email(data)
+                    return HttpResponse({'Verification Email sent. Check your inbox.'})
+                
+            except User.DoesNotExist as exc:
+                return HttpResponse({'The email address does not not match any user accont'})
+        
+            return HttpResponse("The actication email has been resend successfully.. check your inbox")
+        
+    else:
+        re_form = ResendActivationEmailForm()
+    context = {
+        'form': re_form, 
+        }
+    
+    return render(request, 'authenticator/resend_activation_email.html', context)
+    
+    
+    
+    
