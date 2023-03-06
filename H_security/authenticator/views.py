@@ -6,7 +6,7 @@ from django.urls import reverse_lazy, reverse
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib.sites.shortcuts import get_current_site
-from .forms import RegisterForm, LoginForm, UpdateProfileForm, UpdateUserForm, ResendActivationEmailForm, CustomAuthenticationForm
+from .forms import RegisterForm, UpdateProfileForm, UpdateUserForm, ResendActivationEmailForm, CustomAuthenticationForm
 from django.contrib.auth import get_user_model
 from H_security.utils import Mail
 from django.http import HttpResponse

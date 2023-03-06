@@ -19,6 +19,7 @@ def save_profile(sender, instance, **kwargs):
 @receiver(post_save, sender=User)
 def assign_group(sender, instance, created, **kwargs):
     if created:
+        
         email = instance.email
         if email.endswith('@hospital.staff.go.ke'):
             group, created = Group.objects.get_or_create(name='Hospital Staff Group')
