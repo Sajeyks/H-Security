@@ -1,3 +1,4 @@
+{% load has_group %}
 <!doctype html>
 <html lang="en">
 <head>
@@ -27,7 +28,9 @@
             <div class="collapse navbar-collapse" id="navbarCollapse">
               <div class="navbar-nav ml-auto">
                 {% if user.is_authenticated %}
+                  {% if request.user|has_group:"Hospital Staff Group" %}
                   <a href="{% url 'h-records' %}" class="nav-item nav-link">Health Records</a>
+                  {% endif %}
                   <a href="{% url 'users-profile' %}" class="nav-item nav-link">Profile</a>
                   <a href="{% url 'logout' %}" class="nav-item nav-link">Logout</a>
                 {% else %}

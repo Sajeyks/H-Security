@@ -9,8 +9,10 @@
         <hr class="my-4">
         <p class="lead">
             {% if user.is_authenticated %}
-                  <a class="btn btn-primary btn-lg " href="{% url 'users-profile' %}" role="button">Profile</a>
+                  <a class="btn btn-primary btn-lg " href="{% url 'users-profile' %}" role="button">Profile</a> 
+                  {% if request.user|has_group:"Hospital Staff Group" %}
                   <a class="btn btn-primary btn-lg" href="{% url 'h-records' %}" role="button">Health Records</a>
+                  {% endif %}
                   <a class="btn btn-primary btn-lg" href="{% url 'logout' %}" role="button">Logout</a>
 
                 {% else %}
