@@ -36,3 +36,28 @@ class HealthRecord(models.Model):
     
     def __str__(self):
         return str(self.owner)
+    
+    @staticmethod
+    def for_group(user):
+        if user.groups.filter(name='Hospital Staff Group').exists():
+            # user is in allowed_group, return all objects
+            return HealthRecord.objects.all()
+        elif user.groups.filter(name='Non-Staff Group').exists():
+            # user is in restricted_group, return only their own objects
+            # return HealthRecord.objects.filter(owner=user)
+            return HealthRecord.objects.none()
+        else:
+            # user is not in either group, return an empty queryset
+            return HealthRecord.objects.none()
+        
+    @staticmethod
+    def details_for_group(user, pk):
+        if user.groups.filter(name='Hospital Staff Group').exists():
+            # user is in allowed_group, return all objects
+            return HealthRecord.objects.get(pk=pk)
+        elif user.groups.filter(name='Non-Staff Group').exists():
+            # user is in restricted_group, return only their own objects
+            HealthRecord.objects.none()
+        else:
+            # user is not in either group, return an empty queryset
+            return HospitalVisit.objects.none()
