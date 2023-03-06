@@ -4,6 +4,11 @@ from phonenumber_field.formfields import PhoneNumberField
 from django.utils.translation import gettext as _
 from phonenumber_field.widgets import PhoneNumberPrefixWidget
 from .models import Profile, User
+from django.contrib.auth import get_user_model
+
+
+
+User = get_user_model()
 
 # Forms go here
 
@@ -110,3 +115,21 @@ class UpdateProfileForm(forms.ModelForm):
 class ResendActivationEmailForm(forms.Form):
     email = forms.EmailField(required=True,
                              widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+
+class CustomAuthenticationForm(AuthenticationForm):
+    email = forms.EmailField(label=_("Email"), required=True)
+
+    def confirm_login_allowed(self, user):
+        UserModel = get_user_model()
+        if not user.is_active:
+            raise forms.ValidationError(
+                _("This account is inactive."),
+                code='inactive',
+            )
+
+        if self.cleaned_data.get('email') != user.email:
+            raise forms.ValidationError(
+                _("Please enter a correct email and password. Note that both fields may be case-sensitive."),
+                code='invalid_login',
+            )
