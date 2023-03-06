@@ -10,12 +10,22 @@ from .forms import RegisterForm, LoginForm, UpdateProfileForm, UpdateUserForm, R
 from django.contrib.auth import get_user_model
 from H_security.utils import Mail
 from django.http import HttpResponse
+from p_records.models import HealthRecord
 # Create your views here.
 
 User = get_user_model()
 
+
+@login_required
 def home(request):
-    return render(request, 'authenticator/homepage.html')
+    me = request.user
+    my_record = HealthRecord.objects.get(owner=me)
+    
+    context = {
+        "Recorddetails": my_record,
+    }
+    
+    return render(request, "p_records/record-details.html", context)
 
 
 class RegisterView(View):
@@ -177,7 +187,4 @@ def resendVerificationEmail(request):
         }
     
     return render(request, 'authenticator/resend_activation_email.html', context)
-    
-    
-    
     
