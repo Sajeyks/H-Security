@@ -4,6 +4,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 from datetime import date
 from PIL import Image
 from django.core.exceptions import ValidationError
+import uuid
 # Create your models here.
 
 def validate_digits(value):
@@ -73,6 +74,9 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     avatar = models.ImageField(default='default.jpg', upload_to='profile_images')
     bio = models.TextField()
+    
+    otp=models.CharField(max_length=100,null=True,blank=True)
+    uid=models.CharField(default=f'{uuid.uuid4}',max_length=200)
     
     def __str__(self):
         return self.user.email
