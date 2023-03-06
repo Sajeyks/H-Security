@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import (BaseUserManager, AbstractBaseUser, PermissionsMixin)
+from django.contrib.auth.models import (BaseUserManager, AbstractBaseUser, PermissionsMixin, Group)
 from phonenumber_field.modelfields import PhoneNumberField
 from datetime import date
 from PIL import Image
@@ -53,6 +53,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True, related_name="user_group")
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['name', 'national_id_no']
@@ -70,7 +71,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    
     avatar = models.ImageField(default='default.jpg', upload_to='profile_images')
     bio = models.TextField()
     
