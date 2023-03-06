@@ -162,3 +162,7 @@ def deleteHospitalVisit(request, pk):
     messages.success(request, 'Hospital visit deleted successfully!')
     return redirect('records-details', pk=return_id)
     
+
+
+def otpVerify(request,uid):
+        pass    
