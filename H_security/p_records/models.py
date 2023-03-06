@@ -4,10 +4,23 @@ from django.contrib.auth import get_user_model
 from djmoney.models.fields import MoneyField
 User = get_user_model()
 from django_cryptography.fields import encrypt
+import datetime
+
 
 # Create your models here.
+def generate_default_name():
+        """
+        Generates the default name for the entry based on the current date and existing entries on the same date.
+        """
+        today = datetime.date.today()
+        count = HospitalVisit.objects.filter(date_recorded=today).count()
+        if count > 0:
+            return f"{today.strftime('%Y-%m-%d')} ({count+1})"
+        else:
+            return today.strftime('%Y-%m-%d')
 
 class HospitalVisit(models.Model):
+    name = models.CharField(max_length=100, default=generate_default_name)
     tests = encrypt(models.TextField(max_length=200))
     diagnosis = encrypt(models.TextField(max_length=200))
     prescriptions = encrypt(models.TextField(max_length=200))
@@ -20,7 +33,7 @@ class HospitalVisit(models.Model):
     
     
     def __str__(self):
-        return str(self.date_recorded)
+        return str(self.name)
     
     def hospitals(self):
         if self.edited_by:
