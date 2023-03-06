@@ -6,7 +6,7 @@ from django.urls import reverse_lazy, reverse
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib.sites.shortcuts import get_current_site
-from .forms import RegisterForm, LoginForm, UpdateProfileForm, UpdateUserForm, ResendActivationEmailForm
+from .forms import RegisterForm, LoginForm, UpdateProfileForm, UpdateUserForm, ResendActivationEmailForm, CustomAuthenticationForm
 from django.contrib.auth import get_user_model
 from H_security.utils import Mail
 from django.http import HttpResponse
@@ -61,7 +61,7 @@ class RegisterView(View):
     
     
 class CustomLoginView(LoginView):
-    form_class = LoginForm
+    form_class = CustomAuthenticationForm
     
     def form_valid(self, form):
         remember_me = form.cleaned_data.get('remember_me')
@@ -75,6 +75,24 @@ class CustomLoginView(LoginView):
             
         # else browser session will be as long as the session cookie time "SESSION_COOKIE_AGE" defined in settings.py
         return super(CustomLoginView, self).form_valid(form)
+    
+    def form_invalid(self, form):
+        # Check if the user is inactive
+        email = form.cleaned_data.get('email')
+        try:
+            user = User.objects.get(email=email)
+            if not user.is_active:
+                messages.error(self.request, "Your account is not active. Please verify your email.")
+        except User.DoesNotExist:
+            pass
+        return super(CustomLoginView, self).form_invalid(form)
+    
+    def get_success_url(self):
+        if not self.request.user.is_active:
+            # return reverse_lazy('inactive-account') resend-activation-email
+            return reverse_lazy('resend-activation-email')
+        else:
+            return reverse_lazy('h-records')
     
 class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
     template_name = 'authenticator/password_reset.html'
