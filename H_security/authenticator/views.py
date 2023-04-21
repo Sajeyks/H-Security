@@ -97,12 +97,6 @@ class CustomLoginView(LoginView):
             pass
         return super(CustomLoginView, self).form_invalid(form)
     
-    def get_success_url(self):
-        if not self.request.user.is_active:
-            # return reverse_lazy('inactive-account') resend-activation-email
-            return reverse_lazy('resend-activation-email')
-        else:
-            return reverse_lazy('h-records')
     
 class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
     template_name = 'authenticator/password_reset.html'
