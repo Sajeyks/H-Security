@@ -5,12 +5,17 @@ from django.utils.translation import gettext as _
 from phonenumber_field.widgets import PhoneNumberPrefixWidget
 from .models import Profile, User
 from django.contrib.auth import get_user_model
-
+from datetime import date
+from django.core.exceptions import ValidationError
 
 
 User = get_user_model()
 
 # Forms go here
+def past_date_validator(value):
+    today = date.today()
+    if value > today:
+        raise ValidationError('Selected date should be in the past.')
 
 class RegisterForm(UserCreationForm):
     name = forms.CharField(max_length=100,required=True,widget=forms.TextInput(attrs={
@@ -35,7 +40,7 @@ class RegisterForm(UserCreationForm):
     dob = forms.DateField(required=True, widget=forms.DateInput(attrs={
                                                                   'type': 'date',
                                                                   'class': 'form-control',
-                                                                  }))
+                                                                  }), validators=[past_date_validator])
     
     password1 = forms.CharField(max_length=50,required=True,widget=forms.PasswordInput(attrs={
                                                                   'placeholder': 'Password',
