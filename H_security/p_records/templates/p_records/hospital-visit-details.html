@@ -164,17 +164,20 @@
 
     </div>
 
-    <p class="lead">
-      <!-- Button trigger modal -->
-      <button type="button" class="btn-sm btn-primary" data-toggle="modal" data-target="#exampleModal">
-        Edit
-    </button>
 
-  <a href="{% url 'visit_delete' Visitdetails.pk %}" 
-  class="btn-sm btn-danger float-right" role="button" aria-pressed="true">Delete this visit</a>
+    {% for group_for in request.user.groups.all %}
+        {% if group_for.name == 'Hospital Staff Group' %}
+        <p class="lead">
+          <!-- Button trigger modal -->
+          <button type="button" class="btn-sm btn-primary" data-toggle="modal" data-target="#exampleModal">
+            Edit
+        </button>
 
-  </p>
-
+      <a href="{% url 'visit_delete' Visitdetails.pk %}" 
+      class="btn-sm btn-danger float-right" role="button" aria-pressed="true">Delete this visit</a>
+      </p>
+      {% endif %}
+  {% endfor %}
 
     
 </div>
