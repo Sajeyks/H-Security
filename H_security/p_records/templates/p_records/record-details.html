@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block title %} Login Page {% endblock title%}
+{% block content %}
+    
+<div class=" ">
+
+    <div class="jumbotron p-2" style="margin-top: 1rem;">
+        <p class="lead">
+
+            <div class="mb-3 row">
+                <label for="staticEmail" class="col-sm-2 col-form-label">Name:</label>
+                <div class="col-sm-10">
+                  <input type="text" readonly class="form-control-plaintext" value="{{ Recorddetails.owner.name }}">
+                </div>
+            </div>
+
+            <div class="mb-3 row">
+                <label for="staticEmail" class="col-sm-2 col-form-label">Email:</label>
+                <div class="col-sm-10">
+                  <input type="text" readonly class="form-control-plaintext" id="staticEmail" value="{{ Recorddetails.owner }}">
+                </div>
+            </div>
+
+            <div class="mb-3 row">
+                <label for="staticEmail" class="col-sm-2 col-form-label">Phone:</label>
+                <div class="col-sm-10">
+                  <input type="text" readonly class="form-control-plaintext" value="{{ Recorddetails.owner.phone_number }}">
+                </div>
+            </div>
+
+
+            <div class="badge bg-info text-wrap">
+                Pre-excisting conditions
+              </div>
+
+            <ol class="list-group list-group-numbered">
+                <li class="list-group-item" style="background-color: lavender;">
+                  {{ Recorddetails.pre_existing_conditions }}
+                </li>
+            </ol>
+
+        </p>
+        <hr class="my-4">
+
+        {% if Recorddetails.owner != request.user %}
+        <p class="lead">
+            <!-- Button trigger modal -->
+            <button type="button" class="btn-sm btn-primary" data-toggle="modal" data-target="#pre-conditions-modal">
+                Edit Pre-conditions
+            </button>
+        </p>
+        {% endif %}
+  
+        <!-- Pre-conditions Modal -->
+        <div class="modal fade" id="pre-conditions-modal" tabindex="-1" aria-labelledby="pre-conditions-modal" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h6 class="modal-title" id="exampleModalLabel">Edit Pre-existing conditions</h6>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  
+                  <form method="post" >
+                    {% csrf_token %}
+                    {{ preconditions_form|crispy }}
+                    <button type="submit" class="btn btn-success">Submit</button>
+                  </form>
+
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+    </div>
+
+        
+        <table class="table table-striped-columns">
+            <thead>
+            <tr class="text-primary">
+                <th scope="col">#</th>
+                <th scope="col">Hospital Visits</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for v in Recorddetails.hospital_visits.all %}
+            <tr>
+                <td >{{ forloop.counter }}</td>
+                <td >
+                    <a href="{% url 'visit-details' v.pk %}" class="text-info">{{ v }}</a>
+                </td>
+            </tr>
+        </tbody>
+            {% endfor %}
+        </table>
+
+        {% if Recorddetails.owner != request.user %}
+        <a href="{% url 'visit_submit' Recorddetails.pk %}" class="btn-sm btn-primary" role="button" aria-pressed="true">Add Hospital Visit</a>
+        {% endif %}
+
+</div>
+
+{% endblock content %}
+
+<script>
+
+$('#myModal').on('shown.bs.modal', function () {
+  $('#myInput').trigger('focus')
+})
+
+
+</script>

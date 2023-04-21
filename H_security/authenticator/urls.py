@@ -1,6 +1,6 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
-from .views import home, RegisterView, CustomLoginView, ResetPasswordView, profile, ChangePasswordView
+from .views import home, RegisterView, CustomLoginView, ResetPasswordView, profile, ChangePasswordView, resendVerificationEmail, verifyEmailView
 from .forms import LoginForm
 
 urlpatterns = [
@@ -17,5 +17,7 @@ urlpatterns = [
          name='password_reset_complete'),
     path('profile/', profile, name='users-profile'),
     path('password-change/', ChangePasswordView.as_view(), name='password_change'),
+    path('verify-email/', verifyEmailView, name='verify-email'),
+    path('resend-activation-email/', resendVerificationEmail, name='resend-activation-email'),
     
 ]

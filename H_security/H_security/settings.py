@@ -41,11 +41,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'djmoney',
     'authenticator',
     'p_records',
     "phonenumber_field",
+    'crispy_forms',
     
 ]
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -83,8 +87,12 @@ WSGI_APPLICATION = 'H_security.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'Hospital',
+        'USER': 'postgres', 
+        'PASSWORD': os.environ['DB_PASSWORD'],
+        'HOST': '127.0.0.1', 
+        'PORT': '5432',
     }
 }
 
@@ -155,3 +163,10 @@ EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+# Twilio configs
+ACCOUNT_SID=os.environ['ACCOUNT_SID']
+AUTH_TOKEN=os.environ['AUTH_TOKEN']
+COUNTRY_CODE='+254'
+TWILIO_WHATSAPP_NUMBER=os.environ['TWILIO_WHATSAPP_NUMBER']
+TWILIO_PHONE_NUMBER=os.environ['TWILIO_PHONE_NUMBER']

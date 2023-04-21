@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block title %} Login Page {% endblock title%}
+{% block content %}
+    
+<div class=" ">
+
+    <div class="jumbotron p-2" style="margin-top: 1rem;">
+        <p class="lead">
+
+          <div class="mb-3 row">
+            <label for="staticEmail" class="col-sm-2 col-form-label">Patient:</label>
+            <div class="col-sm-10">
+              <input type="text" readonly class="form-control-plaintext" value="{{ Owner }}">
+            </div>
+          </div>
+
+            <div class="mb-3 row">
+                <label for="staticEmail" class="col-sm-2 col-form-label">Created:</label>
+                <div class="col-sm-10">
+                  <input type="text" readonly class="form-control-plaintext" value="{{ Visitdetails.date_recorded }}">
+                </div>
+            </div>
+
+            <div class="mb-3 row">
+                <label for="staticEmail" class="col-sm-2 col-form-label">Last Modified:</label>
+                <div class="col-sm-10">
+                  <input type="text" readonly class="form-control-plaintext" value="{{ Visitdetails.last_modified }}">
+                </div>
+            </div>
+
+            
+
+              <hr class="my-4">
+              <div class="badge bg-info text-wrap">
+                Detailed Record
+              </div>
+
+            <ol class="list-group list-group-numbered">
+                {% for p in Recorddetails.pre_existing_conditions.all %}
+
+                <li class="list-group-item" style="background-color: lavender;">{{ p }}</li>
+                
+                {% endfor %}
+            </ol>
+
+
+            <div class="table-responsive">
+                <table class="table align-middle table-bordered">
+                  <thead>
+                    <tr class="text-primary">
+                        <th scope="col">Tests</th>
+                        <th scope="col">Diagnosis</th>
+                        <th scope="col">Prescriptions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+
+                      <td>
+                        {{ Visitdetails.tests }}
+                    </td>
+
+
+                    <td>
+                      {{ Visitdetails.diagnosis }}
+                  </td>
+
+                  <td>
+                    {{ Visitdetails.prescriptions }}
+                </td>
+                      
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <hr class="my-4">
+              <div class="badge bg-info text-wrap">
+                Hospital Bill
+              </div>
+
+              <div class="table-responsive mw-50">
+                <table class="table align-middle table-bordered table-sm">
+                  <tbody>
+
+                    <tr>
+                      <td >
+                       <b> Total </b>
+                      </td>
+                      <td >
+                       <b>{{ Visitdetails.bill}}</b>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td >
+                        Billed to
+                      </td>
+                      <td >
+                        {{ Visitdetails.billed_to }}
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td >
+                        Paid
+                      </td>
+                      <td >
+                        {% if Visitdetails.paid is True %}
+                          Yes
+                        {% else %}
+                          No
+                        {% endif %}
+                      </td>
+                    </tr>
+
+                    
+                  </tbody>
+                </table>
+              </div>
+
+
+        </p>
+        <hr class="my-4">
+        
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h6 class="modal-title" id="exampleModalLabel">Edit a hospital visit</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+
+                <form method="POST" novalidate>
+                  {% csrf_token %}
+                  {{ form|crispy }}
+                  <button type="submit" class="btn btn-success">Submit</button>
+                </form>
+
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="badge bg-info text-wrap">
+          Edited by:
+        </div>
+
+      <ol class="list-group list-group-numbered">
+          <li class="list-group-item" style="background-color: lavender;">
+            {{ Visitdetails.edited_by.all |join:', ' }}
+          </li>
+      </ol>
+
+
+    </div>
+
+
+    {% for group_for in request.user.groups.all %}
+        {% if group_for.name == 'Hospital Staff Group' %}
+        <p class="lead">
+          <!-- Button trigger modal -->
+          <button type="button" class="btn-sm btn-primary" data-toggle="modal" data-target="#exampleModal">
+            Edit
+        </button>
+
+      <a href="{% url 'visit_delete' Visitdetails.pk %}" 
+      class="btn-sm btn-danger float-right" role="button" aria-pressed="true">Delete this visit</a>
+      </p>
+      {% endif %}
+  {% endfor %}
+
+    
+</div>
+
+{% endblock content %}

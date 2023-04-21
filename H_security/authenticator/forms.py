@@ -1,18 +1,25 @@
 from django import forms
-# from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from phonenumber_field.formfields import PhoneNumberField
 from django.utils.translation import gettext as _
 from phonenumber_field.widgets import PhoneNumberPrefixWidget
 from .models import Profile, User
+from django.contrib.auth import get_user_model
+from datetime import date
+from django.core.exceptions import ValidationError
 
-# User = get_user_model()
+
+User = get_user_model()
 
 # Forms go here
+def past_date_validator(value):
+    today = date.today()
+    if value > today:
+        raise ValidationError('Selected date should be in the past.')
 
 class RegisterForm(UserCreationForm):
-    username = forms.CharField(max_length=100,required=True,widget=forms.TextInput(attrs={
-                                                                  'placeholder': 'Username',
+    name = forms.CharField(max_length=100,required=True,widget=forms.TextInput(attrs={
+                                                                  'placeholder': 'Name',
                                                                   'class': 'form-control',
                                                                   }))
     
@@ -24,6 +31,16 @@ class RegisterForm(UserCreationForm):
                                                                   'placeholder': 'Phone Number',
                                                                   'class': 'form-control',
                                                                   }))
+    
+    national_id_no = forms.IntegerField(required=True, widget=forms.NumberInput(attrs={
+                                                                  'placeholder': 'Id/Birth Certificate No',
+                                                                  'class': 'form-control',
+                                                                  }))
+    
+    dob = forms.DateField(required=True, widget=forms.DateInput(attrs={
+                                                                  'type': 'date',
+                                                                  'class': 'form-control',
+                                                                  }), validators=[past_date_validator])
     
     password1 = forms.CharField(max_length=50,required=True,widget=forms.PasswordInput(attrs={
                                                                   'placeholder': 'Password',
@@ -41,7 +58,7 @@ class RegisterForm(UserCreationForm):
     
     class Meta:
         model = User
-        fields = ['username', 'email', 'phone_number' ,'password1', 'password2']
+        fields = ['name', 'email', 'phone_number', 'national_id_no', 'dob' , 'password1', 'password2']
         
 
 class LoginForm(AuthenticationForm):
@@ -62,11 +79,11 @@ class LoginForm(AuthenticationForm):
 
     class Meta:
         model = User
-        fields = ['username', 'password', 'remember_me']
+        fields = ['name', 'password', 'remember_me']
         
         
 class UpdateUserForm(forms.ModelForm):
-    username = forms.CharField(max_length=100,
+    name = forms.CharField(max_length=100,
                                required=True,
                                widget=forms.TextInput(attrs={'class': 'form-control'}))
     email = forms.EmailField(required=True,
@@ -77,9 +94,19 @@ class UpdateUserForm(forms.ModelForm):
                                                                   'class': 'form-control',
                                                                   }))
     
+    national_id_no = forms.IntegerField(required=True, widget=forms.NumberInput(attrs={
+                                                                'placeholder': 'Id/Birth Certificate No',
+                                                                'class': 'form-control',
+                                                                }))
+    
+    dob = forms.DateField(required=True, widget=forms.DateInput(attrs={
+                                                                  'type': 'date',
+                                                                  'class': 'form-control',
+                                                                  }))
+    
     class Meta:
         model = User
-        fields = ['username', 'email', 'phone_number']
+        fields = ['name', 'email', 'phone_number', 'national_id_no', 'dob']
         
 class UpdateProfileForm(forms.ModelForm):
     avatar = forms.ImageField(widget=forms.FileInput(attrs={'class': 'form-control-file'}))
@@ -88,3 +115,26 @@ class UpdateProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ['avatar', 'bio']
+        
+
+class ResendActivationEmailForm(forms.Form):
+    email = forms.EmailField(required=True,
+                             widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+
+class CustomAuthenticationForm(AuthenticationForm):
+    email = forms.EmailField(label=_("Email"), required=True)
+
+    def confirm_login_allowed(self, user):
+        UserModel = get_user_model()
+        if not user.is_active:
+            raise forms.ValidationError(
+                _("This account is inactive."),
+                code='inactive',
+            )
+
+        if self.cleaned_data.get('email') != user.email:
+            raise forms.ValidationError(
+                _("Please enter a correct email and password. Note that both fields may be case-sensitive."),
+                code='invalid_login',
+            )
